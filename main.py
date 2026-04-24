@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 # models
 import models
@@ -24,7 +24,7 @@ app.include_router(router)
 
 
 # main page
-from fastapi import Request,Depends ,HTTPException
+from fastapi import Request,Depends
 from fastapi.responses import HTMLResponse
 
 
@@ -187,14 +187,15 @@ def product_search(request: Request):
     return templates.TemplateResponse("product_search.html", {
         "request": request,
     })
-from fastapi import Depends
+
+
+#มีปัญหา-------------------------------
 from fastapi.security import HTTPBearer
 from jwt_auth import verify_token
 security = HTTPBearer()
-# http://localhost:8000/api/v1/users
 
 @app.get("/api/products/search")
-def product_search_api(search: str = "",user=Depends(verify_token)):
+def product_search_api(search: str = "", user=Depends(verify_token)):
     db = SessionLocal()
     try:
         return db.query(Product).filter(
@@ -202,9 +203,11 @@ def product_search_api(search: str = "",user=Depends(verify_token)):
         ).all()
     finally:
         db.close()
+#มีปัญหา-------------------------------
 
 
 
+#
 # Upload slip & OCR
 #
 @app.get("/pvs/upload", response_class=HTMLResponse)
@@ -366,7 +369,6 @@ def logout(request: Request):
     return RedirectResponse("/login", status_code=303)
 
 
-
 from jwt_auth import create_token
 @app.post("/api/login")
 def login(username: str, password: str):
@@ -381,5 +383,19 @@ def login(username: str, password: str):
         detail="Invalid username or password"
 )
 
+
 print("Edit by me")
-print(555)
+print("99")
+
+
+@app.get('/api/hello')
+def hello_api():
+    return {'message': 'API Works!'}
+
+@app.get('/api/grade')
+def grade_api(score:float = None):
+    if score >= 85:
+        return {'grade': 'A'}
+    elif score >= 75 and score < 85:
+        return {'grade': 'B+'}
+    return {'grade': 'F'}

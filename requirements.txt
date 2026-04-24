@@ -4,3 +4,4 @@ jinja2
 easyocr
 itsdangerous
 pyjwt
+pytest
